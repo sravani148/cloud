@@ -1,0 +1,49 @@
+pipeline {
+    agent {  label 'Linux1'   }
+    environment {
+        CC = 'Clang' //declaring ourselves
+        
+        //using returnstdout
+        CC1 = """ ${sh(                      
+                    returnStdout: true,         
+                    script: 'echo "Clang"')}"""
+        EXIT_STATUS = """${sh(
+                    returnStatus: true,
+                    script: 'exit 1')}"""
+    }
+   parameters {
+  string (name: 'STATEMENT', defaultValue: 'Hello there', description: 'What should I say')
+  choice (name: 'BRANCH', choices: ['develop', 'feature'], description: 'SCM checkout branch')
+  booleanParam(name: 'Qualys', defaultValue: true, description: 'Check the box if you need Qualys Scannner')
+    }
+    stages {
+        stage('Environment Example') {
+            environment {                 DEBUG_FLAGS = '-g'            }
+            steps {
+                echo 'Test environment varialbes globally and locally'
+                sh "pwd"
+                //sh 'printenv'
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+                echo "Parameter 1: ${params.STATEMENT} World"
+                echo "Parameter 2: ${params.BRANCH}"
+                echo "Parameter 3: ${params.Qualys}"
+            }
+            
+        }
+        stage('Test stage'){
+            steps {
+                echo 'Hi SIngle quotes ${params.STATEMENT}'
+                echo "FINALLY double quotes TESTING ${params.STATEMENT}"
+            }
+        }
+    }
+    post {
+        always {
+            //exit 0
+            echo "success"
+        }
+        failure {
+            echo "Failed"
+        }
+    }
+}
