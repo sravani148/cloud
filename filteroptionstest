@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+    parameters {
+        activeChoice choiceType: 'PT_SINGLE_SELECT', 
+        name: 'PLATFORM', 
+        description: 'Select Platform', 
+        filterLength: 1, 
+        filterable: false, 
+        script: groovyScript(fallbackScript: [classpath: [], sandbox: true, script: 'return[\'ERROR\']'], 
+        script: [classpath: [], sandbox: true, script: 'return[\'TKGI\',\'EKS\']'])
+        
+        reactiveChoice choiceType: 'PT_SINGLE_SELECT', 
+        filterLength: 1, 
+        filterable: false, 
+        name: 'PROJECT_KEY', referencedParameters: 'PLATFORM', 
+        script: groovyScript(fallbackScript: [classpath: [], oldScript: '', 
+        sandbox: true, script: ''], 
+        script: [classpath: [], oldScript: '', 
+        sandbox: true, script: '''if (PLATFORM.equals(\'TKGI\')){
+                                return[\'TAO\']
+                                    }
+                                else if (PLATFORM.equals(\'EKS\')){
+                                return[\'MWMEKS\']
+                                }'''])
+                                
+        reactiveChoice choiceType: 'PT_SINGLE_SELECT', 
+        filterLength: 1, filterable: false, 
+        name: 'REGISTRY', 
+        referencedParameters: 'PLATFORM', 
+        script: groovyScript(fallbackScript: [classpath: [], oldScript: '', 
+        sandbox: true, script: ''], 
+        script: [classpath: [], oldScript: '', 
+        sandbox: true, script: '''if (PLATFORM.equals(\'TKGI\')){
+                                        return [\'DAL\',\'PHX\']
+                                        }
+                                        else if (PLATFORM.equals(\'EKS\')){
+                                           return [\'ES1\',\'WS2\']
+                                        }'''])
+                                        
+        booleanParam defaultValue: false, description: 'Click on checkbox to do DryRUn', name: 'DryRun'
+        choice choices: ['Yes', 'No'], name: 'Deploy'
+            }
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo "${params.PLATFORM}"
+                echo "${params.PROJECT_KEY}"
+                echo "${params.REGISTRY}"
+             }
+        }
+        stage('Dry_Run') {
+            when {
+                expression { return params.DryRun }
+            }
+            steps {
+                echo 'Running Dry run with helm installation into production..'
+                // Additional testing logic here
+            }
+        }
+        stage('Deploy') {
+             when {
+                expression { params.Deploy == 'Yes' || params.Deploy == 'Only' }
+            }
+            steps {
+                echo '*******Deploying into production***********'
+                echo '---------Successflly Deployed---------'
+            }
+           }
+        }
+    }
+
