@@ -16,7 +16,6 @@ parameters {
                   }
             }
         }
-     stages {
         stage('Build') {
             steps {
                 script{
