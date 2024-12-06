@@ -2,12 +2,26 @@
 
 pipeline {
     agent any
+parameters {
+  string defaultValue: 'develop', name: 'BRANCH'
+  string defaultValue: 'maven', name: 'BUILD'
+}
 
     stages {
+        stage('Checkout') {
+            steps {
+                script{
+                  execgitoperations()
+                   echo " ${params.BRANCH} " 
+                  }
+            }
+        }
+     stages {
         stage('Build') {
             steps {
                 script{
                   build()
+                  echo " ${params.BUILD} " 
                   }
             }
         }
