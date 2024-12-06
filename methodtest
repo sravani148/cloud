@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build')
+    }
+
+    stages {
+        stage('Initialize') {
+            steps {
+                echo 'Initializing build process...'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Call the build method
+                    buildProject(params.BRANCH)
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                
+                // Add your test steps here
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                deploy()
+                // Add deployment steps here
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and deployment completed successfully.'
+        }
+        failure {
+            echo 'Build or deployment failed.'
+        }
+    }
+}
+
+// Method to handle the build logic
+def buildProject(String branch) {
+    echo "Building project for branch: ${branch}"
+    // Add the actual build commands here, for example:
+    //sh "git checkout ${branch}"
+    //sh './gradlew build'  // For Gradle-based projects
+    // Or if using Maven
+    // sh 'mvn clean install'
+}
+
+def deploy(){
+    echo " Deploying ${Udeploy} "
+}
