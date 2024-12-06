@@ -12,7 +12,7 @@ parameters {
             steps {
                 echo " ${params.BRANCH} " 
                 script{
-                  execgitoperations()                   
+                  gitcheckout()                   
                   }
             }
         }
