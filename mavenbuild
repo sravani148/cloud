@@ -10,17 +10,17 @@ parameters {
     stages {
         stage('Checkout') {
             steps {
+                echo " ${params.BRANCH} " 
                 script{
-                  execgitoperations()
-                   echo " ${params.BRANCH} " 
+                  execgitoperations()                   
                   }
             }
         }
         stage('Build') {
             steps {
+            echo " ${params.BUILD} " 
                 script{
-                  build()
-                  echo " ${params.BUILD} " 
+                  build()                  
                   }
             }
         }
