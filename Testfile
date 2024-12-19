@@ -1,0 +1,22 @@
+@Library ( 'ShlibTest')_
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo '***********'
+                script{
+                    build($service)
+                }
+            }
+        }
+        stage('TestBuild') {
+            steps {
+                echo 'TestingBuildProcess'
+                
+            }
+        }
+    }
+}
