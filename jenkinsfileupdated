@@ -1,0 +1,55 @@
+@Library ( 'ShlibTest' )_
+
+pipeline {
+    agent any
+
+parameters {
+  choice choices: ['test'], name: 'service'
+  string defaultValue: 'docker', name: 'imagename'
+  string defaultValue: 'xyz.com', name: 'git_url'
+}
+
+    stages {
+        stage('Build') {
+            steps {
+                echo " Hello ${params.service} "
+                echo 'Hello ${params.service}'//no string interpolation
+                script {
+                    build()
+                    buildwithparameters "${params.image}"
+                    giturl()
+                    giturl ("${params.git_url}", "{params.service}")
+                }
+            }
+        }
+    }
+}
+
+
+-------------library-----------
+build.groovy
+
+def call (){
+  echo "Build Stage calling from shared library ${params.service}"
+  echo "${params.service}"
+}
+****
+buildwithparameters.groovy
+
+def call (String imagename) {
+        echo "calling parameter from shared library ${params.imagename}"        
+}
+****
+giturl.groovy
+
+def call (){
+    echo "calling ${params.git_url}"
+}
+def call(String git_url,String service){
+    echo " ${params.git_url} + ${params.service}"
+    echo "COMBINING"
+}
+****
+
+//Testing 1 2 3
+Testing with another branch clearing the data in file and merging it in main file
