@@ -50,5 +50,9 @@ def call(String git_url,String service){
     echo "COMBINING"
 }
 ****
-
+def call (){
+  echo "Build Stage calling from shared library ${params.service}"
+  echo "${params.service}"
+}
 //Testing 1 2 3
+Testing with another branch clearing the data in file and merging it in main file
